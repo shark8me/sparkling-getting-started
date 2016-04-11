@@ -1,7 +1,7 @@
 ;; gorilla-repl.fileformat = 1
 
 ;; **
-;;; # Using Spark Machine learning libraries
+;;; # Using Spark Machine Learning libraries in Clojure
 ;;; 
 ;;; In this worksheet, we'll use Sparkling to load a dataset in the libSVM format, and then run typical machine learning tasks. 
 ;;; 
@@ -52,16 +52,16 @@
 ;; **
 ;;; ## Cross validation
 ;;; 
-;;; We'll train a binary classifier on this dataset and evaluate its performance using cross validation, on the areaUnderROC curve metric.
+;;; We'll train a binary classifier on this dataset and evaluate its performance using cross validation, on the [areaUnderROC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) curve metric.
 ;;; 
 ;;; This API uses the middleware pattern (inspired by [Ring](https://github.com/ring-clojure/ring/wiki/Concepts)) to specify these artifacts:
 ;;; 
-;;; * The handler function does the cross validation 
-;;; * The add-dataset function takes a function which returns the dataset in a Spark DataFrame
-;;; * The estimator is the type of classifier or regressor used. In this case, we'll use a logistic regression classifier.
-;;; * The evaluator in this case is a binary classification evaluator. If we have a multi-class classification problem, a multi class evaluator will apply. The default metric for classification is area under the ROC curve.
+;;; * The _handler_ function does the cross validation 
+;;; * The _add-dataset_ function takes a function which returns the dataset in a Spark DataFrame
+;;; * The _estimator_ is the type of classifier or regressor used. In this case, we'll use a logistic regression classifier.
+;;; * The _evaluator_ in this case is a binary classification evaluator. If we have a multi-class classification problem, a multi class evaluator will apply. The default metric for classification is area under the ROC curve.
 ;;; 
-;;; The *run-pipeline* function will execute the handler and return the cross validated areaUnderROC metric.
+;;; The *run-pipeline* function will execute the handler and return the cross validated score for areaUnderROC metric.
 ;; **
 
 ;; @@
@@ -76,10 +76,10 @@
 ;; <=
 
 ;; **
-;;; The previous example used the default options for logistic regression, as well as the evaluator. In the next example, we'll specify
+;;; The previous example used the default options for the Logistic Regression Classifier, as well as the (Binary Classification) evaluator. In the next example, we'll specify
 ;;; 
-;;; * A hyperparameter for the classifier (elastic-net-param)
-;;; * A different evaluation metric for the evaluator (area under Precision recall curve) 
+;;; * A hyperparameter for the Classifier (elastic-net-param)
+;;; * A different evaluation metric for the evaluator (area under [Precision recall](https://en.wikipedia.org/wiki/Precision_and_recall) curve) 
 ;; **
 
 ;; @@
@@ -94,7 +94,7 @@
 ;; <=
 
 ;; **
-;;; We could also change the parameters for the cross validation handler itself. Lets change the number of folds to 5 fold (from the default 3)
+;;; We could also change the parameters for the cross validation handler. Lets change the number of folds to 5 fold (from the default 3).
 ;; **
 
 ;; @@
@@ -111,9 +111,9 @@
 ;; **
 ;;; ## Train-validation split
 ;;; 
-;;; Instead of using cross validation, we could use a single fold and split the train-test set in terms of a percentage. 
+;;; Instead of using cross validation, we could use a single fold and split the train-test set in terms of a percentage. We set the training set size as a percentage of the total dataset size, the balance is the test set. 
 ;;; 
-;;; We'll use a train-validation handler instead of a cross validation handler, while the rest of the parameters is unchanged.
+;;; We'll use a train-validation handler instead of a cross validation handler, while the rest of the parameters are unchanged.
 ;; **
 
 ;; @@
@@ -124,7 +124,7 @@
   (m/run-pipeline tvhandler))
 ;; @@
 ;; =>
-;;; {"type":"html","content":"<span class='clj-unkown'>(0.9919497271895795)</span>","value":"(0.9919497271895795)"}
+;;; {"type":"html","content":"<span class='clj-unkown'>(0.9915147705845379)</span>","value":"(0.9915147705845379)"}
 ;; <=
 
 ;; **
@@ -139,13 +139,13 @@
   (m/run-pipeline tvhandler))
 ;; @@
 ;; =>
-;;; {"type":"html","content":"<span class='clj-unkown'>(0.9897219862173144)</span>","value":"(0.9897219862173144)"}
+;;; {"type":"html","content":"<span class='clj-unkown'>(0.9897097438081046)</span>","value":"(0.9897097438081046)"}
 ;; <=
 
 ;; **
 ;;; ## Grid search
 ;;; 
-;;; Often classifiers use multiple hyperparameters, and we would like to find the values of hyperparameters that give the best classification scores. SparkML provides a grid search functionality for the same. See [link](http://scikit-learn.org/stable/modules/grid_search.html) for grid search in Scikit-learn
+;;; Often classifiers use multiple hyperparameters, and we would like to find the values of hyperparameters that give the best classification scores. SparkML provides a grid search functionality for the same. See [link](http://scikit-learn.org/stable/modules/grid_search.html) for a description of the grid search in Scikit-learn
 ;;; 
 ;;; We'll assign a range of *regularization* values and find the cross validated scores for each value.
 ;; **
@@ -169,7 +169,7 @@
 ;; <=
 
 ;; **
-;;; The 3 scores correspond to the three values for regularization, and we can see that the last value (0.01) returns the best cross validated score on the AucROC metric.
+;;; The 3 scores correspond to the three values for regularization (provided as a vector to _add-grid-search_ [0.1, 0.05, 0.01]), and we can see that the last value (0.01) returns the best cross validated score on the AucROC metric.
 ;; **
 
 ;; @@
