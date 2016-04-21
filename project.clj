@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [gorillalabs/sparkling "1.2.4" :exclusions [[javax.servlet/servlet-api]]]]
+                 [gorillalabs/sparkling "1.2.5-SNAPSHOT" :exclusions [[javax.servlet/servlet-api]]]]
 
   :aot [#".*" sparkling.serialization sparkling.destructuring]
   :main tf-idf.core
@@ -18,7 +18,8 @@
                          [org.apache.spark/spark-mllib_2.10 "1.6.1"
                           :exclusions [[javax.servlet/servlet-api]]]
                           ]}
-             :dev {:plugins [[lein-dotenv "RELEASE"]]}})
+             :dev {:dependencies [[org.clojure/data.generators "0.1.2"]]
+                   :plugins [[lein-dotenv "RELEASE"]]}})
 
 
 ;; run example with
